@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Record System Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -72,6 +74,8 @@
        .btn-delete:hover { background: #b91c1c; }
        .btn-export { background: #059669; }
        .btn-export:hover { background: #047857; }
+       .btn-pdf { background: #7c3aed; }
+       .btn-pdf:hover { background: #6d28d9; }
        .btn-secondary { background: #6b7280; }
        .btn-secondary:hover { background: #4b5563; }
        .controls {
@@ -187,6 +191,7 @@
         <div class="controls">
             <input type="text" id="searchInput" placeholder="Search by name, ID, or course..." onkeyup="searchStudents()">
             <button class="btn-export" onclick="exportCSV()">Export CSV</button>
+            <button class="btn-pdf" onclick="exportPDF()">Export PDF</button>
             <button class="btn-secondary" onclick="sortTable('name')">Sort by Name</button>
             <button class="btn-secondary" onclick="sortTable('grade')">Sort by Grade</button>
             <button class="btn-secondary" onclick="sortTable('course')">Sort by Course</button>
@@ -309,6 +314,32 @@
             a.href = url;
             a.download = 'student_records.csv';
             a.click();
+        }
+
+        function exportPDF() {
+            if (students.length === 0) {
+                alert('No data to export');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFontSize(18);
+            doc.text('Student Record System Pro', 14, 20);
+            doc.setFontSize(11);
+            doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 28);
+            
+            const tableData = students.map(s => [s.name, s.studentId, s.course, s.grade]);
+            
+            doc.autoTable({
+                head: [['Name', 'Student ID', 'Course', 'Grade']],
+                body: tableData,
+                startY: 35,
+                theme: 'grid',
+                headStyles: { fillColor: [30, 64, 175] }
+            });
+            
+            doc.save('student_records.pdf');
         }
         
         function updateStats() {
