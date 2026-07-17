@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Pro V3 - Ultimate</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,sans-serif;background:#f0f2f5;padding:12px}
+.container{max-width:1100px;margin:0 auto;background:white;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.08);overflow:hidden}
+.header{background:linear-gradient(135deg,#111827,#4f46e5);color:white;padding:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.header h1{font-size:22px}
+.btn{border:none;padding:10px 16px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
+.btn-primary{background:#4f46e5;color:white}
+.btn-dark{background:#111827;color:white}
+.btn-danger{background:#ef4444;color:white}
+.btn-success{background:#10b981;color:white}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:15px;background:#f9fafb;border-bottom:1px solid #e5e7eb}
+.stat{background:white;padding:14px;border-radius:10px;text-align:center}
+.stat b{font-size:20px;color:#4f46e5;display:block}
+.stat span{font-size:11px;color:#6b7280;text-transform:uppercase}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:15px;background:#fff;border-bottom:1px solid #e5e7eb}
+.chart-box{background:#f9fafb;border-radius:10px;padding:15px;height:260px}
+.form-section{padding:18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;border-bottom:1px solid #e5e7eb}
+.full{grid-column:1/-1}
+label{font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;margin-bottom:4px;display:block}
+input,select{width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px}
+input:focus{outline:none;border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.toolbar{padding:12px 15px;display:flex;gap:8px;flex-wrap:wrap;background:#f9fafb;border-bottom:1px solid #e5e7eb}
+.toolbar input,.toolbar select{flex:1;min-width:140px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#f9fafb;padding:10px 12px;text-align:left;font-size:11px;color:#6b7280;text-transform:uppercase;border-bottom:2px solid #e5e7eb;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid #f3f4f6;font-size:13px;vertical-align:middle}
+.avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#e5e7eb}
+.grade{font-weight:700;padding:3px 7px;border-radius:20px;font-size:11px}
+.pass{background:#dcfce7;color:#166534}
+.fail{background:#fee2e2;color:#991b1b}
+.badge{padding:3px 7px;border-radius:12px;font-size:10px;font-weight:700}
+.badge.Active{background:#dbeafe;color:#1e40af}
+.badge.Graduated{background:#dcfce7;color:#166534}
+.badge.Suspended{background:#fee2e2;color:#991b1b}
+.badge.Inactive{background:#f3f4f6;color:#374151}
+.actions{display:flex;gap:5px}
+.icon{border:none;background:#f3f4f6;padding:6px 9px;border-radius:6px;cursor:pointer;font-size:11px}
+.icon.del{background:#fee2e2;color:#991b1b}
+.icon.edit{background:#fef3c7;color:#92400e}
+.empty{text-align:center;padding:40px;color:#9ca3af}
+.toast{position:fixed;bottom:20px;right:20px;background:#111827;color:white;padding:11px 16px;border-radius:10px;display:none;z-index:999;font-size:13px}
+.login-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000}
+.login-box{background:white;padding:25px;border-radius:12px;width:320px}
+.login-box h3{margin-bottom:15px}
+@media(max-width:800px){.form-section{grid-template-columns:1fr 1fr}.charts{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.form-section{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<div><h1>🎓 Student Pro V3 Ultimate</h1><p id="status" style="font-size:12px;opacity:.9;margin-top:4px">Connecting...</p></div>
+<div style="display:flex;gap:8px">
+<button id="loginBtn" class="btn btn-dark" onclick="showLogin()">🔐 Admin Login</button>
+<button id="logoutBtn" class="btn btn-danger" onclick="logout()" style="display:none">Logout</button>
+</div>
+</div>
+
+<div class="stats">
+<div class="stat"><b id="total">0</b><span>Total</span></div>
+<div class="stat"><b id="avg">0%</b><span>Average</span></div>
+<div class="stat"><b id="pass">0</b><span>Pass</span></div>
+<div class="stat"><b id="fail">0</b><span>Fail</span></div>
+</div>
+
+<div class="charts">
+<div class="chart-box"><canvas id="gradeChart"></canvas></div>
+<div class="chart-box"><canvas id="courseChart"></canvas></div>
+</div>
+
+<div class="form-section" id="formSec">
+<div><label>Full Name *</label><input id="full_name" placeholder="Jane Doe"></div>
+<div><label>Student ID *</label><input id="student_id" placeholder="STU001"></div>
+<div><label>Email</label><input id="email" placeholder="jane@school.edu"></div>
+<div><label>Course *</label><input id="course" placeholder="Computer Science"></div>
+<div><label>Year (1-6)</label><select id="year_of_study"><option value="1">Year 1</option><option value="2">Year 2</option><option value="3" selected>Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6">Year 6</option></select></div>
+<div><label>Grade 0-100 *</label><input id="grade" type="number" min="0" max="100" placeholder="85"></div>
+<div><label>Status</label><select id="status_sel"><option>Active</option><option>Graduated</option><option>Suspended</option><option>Inactive</option></select></div>
+<div><label>Photo</label><input id="photo" type="file" accept="image/*"></div>
+<div class="full"><button id="saveBtn" class="btn btn-primary" style="width:100%" onclick="saveStudent()">➕ Add Student</button></div>
+<input type="hidden" id="edit_id">
+</div>
+
+<div class="toolbar">
+<input id="search" placeholder="🔍 Search name, ID, email..." oninput="doFilter()">
+<select id="fCourse" onchange="doFilter()"><option value="">All Courses</option></select>
+<select id="fStatus" onchange="doFilter()"><option value="">All Status</option><option>Active</option><option>Graduated</option><option>Suspended</option><option>Inactive</option></select>
+<select id="fYear" onchange="doFilter()"><option value="">All Years</option><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6">Year 6</option></select>
+<button class="btn btn-success" onclick="exportCSV()">⬇️ CSV</button>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Photo</th><th>Name</th><th>ID</th><th>Course</th><th>Year</th><th>Grade</th><th>Status</th><th>Action</th></tr></thead>
+<tbody id="tbody"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+
+<div class="login-modal" id="loginModal">
+<div class="login-box">
+<h3>Admin Login</h3>
+<p style="font-size:12px;color:#6b7280;margin-bottom:10px">Only admin can delete/edit. Use password: <b>admin123</b></p>
+<input id="adminPass" type="password" placeholder="Enter admin password" style="margin-bottom:12px">
+<button class="btn btn-primary" style="width:100%" onclick="login()">Login</button>
+<button class="btn" style="width:100%;margin-top:8px;background:#f3f4f6;color:#374151" onclick="hideLogin()">Cancel</button>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL='https://tuudhnxqmnqxikqgmrzj.supabase.co';
+const SUPABASE_KEY='sb_publishable_61sdjEEXf09fMqQDz0ybPg_5_p-rPFx';
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let all=[],filtered=[],gradeChart,courseChart;
+let isAdmin = localStorage.getItem('isAdmin')==='true';
+
+function updateAuthUI(){
+document.getElementById('loginBtn').style.display=isAdmin?'none':'block';
+document.getElementById('logoutBtn').style.display=isAdmin?'block':'none';
+document.getElementById('formSec').style.opacity=isAdmin?'1':'0.6';
+document.getElementById('formSec').style.pointerEvents=isAdmin?'auto':'none';
+if(!isAdmin) document.getElementById('status').textContent+=' (View Only - Login to edit)';
+}
+function showLogin(){document.getElementById('loginModal').style.display='flex'}
+function hideLogin(){document.getElementById('loginModal').style.display='none'}
+function login(){
+const p=document.getElementById('adminPass').value;
+if(p==='admin123'){isAdmin=true;localStorage.setItem('isAdmin','true');hideLogin();toast('Admin logged in!');updateAuthUI();render(filtered);}
+else toast('Wrong password! Use admin123',true);
+}
+function logout(){isAdmin=false;localStorage.removeItem('isAdmin');toast('Logged out');updateAuthUI();render(filtered);}
+
+async function load(){
+const {data,error}=await db.from('students_pro').select('*').order('created_at',{ascending:false});
+if(error){document.getElementById('status').textContent='Error: '+error.message;return;}
+all=data;document.getElementById('status').textContent='● Online - Shared Live ('+data.length+')'+(isAdmin?' - Admin Mode':' - View Only');
+updateCourseFilter();doFilter();
+}
+function updateCourseFilter(){
+const courses=[...new Set(all.map(s=>s.course))];
+document.getElementById('fCourse').innerHTML='<option value="">All Courses</option>'+courses.map(c=>`<option>${c}</option>`).join('');
+}
+function doFilter(){
+const q=document.getElementById('search').value.toLowerCase();
+const c=document.getElementById('fCourse').value;
+const s=document.getElementById('fStatus').value;
+const y=document.getElementById('fYear').value;
+filtered=all.filter(x=>{
+const mq=!q||x.full_name.toLowerCase().includes(q)||x.student_id.toLowerCase().includes(q)||(x.email&&x.email.toLowerCase().includes(q));
+const mc=!c||x.course===c;
+const ms=!s||x.status===s;
+const my=!y||String(x.year_of_study)===y;
+return mq&&mc&&ms&&my;
+});
+render(filtered);
+}
+function render(list){
+document.getElementById('total').textContent=list.length;
+const avg=list.length?Math.round(list.reduce((a,b)=>a+b.grade,0)/list.length):0;
+document.getElementById('avg').textContent=avg+'%';
+document.getElementById('pass').textContent=list.filter(x=>x.grade>=50).length;
+document.getElementById('fail').textContent=list.filter(x=>x.grade<50).length;
+const tbody=document.getElementById('tbody');
+if(list.length===0){tbody.innerHTML='<tr><td colspan="8" class="empty">No students found</td></tr>';updateCharts([]);return;}
+tbody.innerHTML=list.map(x=>`
+<tr>
+<td><img class="avatar" src="${x.photo_url||'https://ui-avatars.com/api/?name='+encodeURIComponent(x.full_name)+'&background=4f46e5&color=fff'}" onerror="this.src='https://ui-avatars.com/api/?name='+encodeURIComponent('${x.full_name}')"></td>
+<td><b>${x.full_name}</b><br><small style="color:#6b7280">${x.email||''}</small></td>
+<td>${x.student_id}</td>
+<td>${x.course}</td>
+<td>Y${x.year_of_study||'-'}</td>
+<td><span class="grade ${x.grade>=50?'pass':'fail'}">${x.grade}%</span></td>
+<td><span class="badge ${x.status}">${x.status}</span></td>
+<td><div class="actions">
+${isAdmin?`<button class="icon edit" onclick="edit(${x.id})">Edit</button><button class="icon del" onclick="del(${x.id})">Del</button>`:'<small style="color:#9ca3af">🔒 View only</small>'}
+</div></td>
+</tr>`).join('');
+updateCharts(list);
+}
+function updateCharts(list){
+const ctx1=document.getElementById('gradeChart').getContext('2d');
+const ctx2=document.getElementById('courseChart').getContext('2d');
+const ranges={'0-39':0,'40-49':0,'50-69':0,'70-84':0,'85-100':0};
+list.forEach(s=>{
+if(s.grade<40)ranges['0-39']++;else if(s.grade<50)ranges['40-49']++;else if(s.grade<70)ranges['50-69']++;else if(s.grade<85)ranges['70-84']++;else ranges['85-100']++;
+});
+if(gradeChart)gradeChart.destroy();
+gradeChart=new Chart(ctx1,{type:'bar',data:{labels:Object.keys(ranges),datasets:[{label:'Students',data:Object.values(ranges),backgroundColor:'#4f46e5'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'Grade Distribution'}}}});
+const courseMap={};
+list.forEach(s=>{courseMap[s.course]=(courseMap[s.course]||0)+1});
+if(courseChart)courseChart.destroy();
+courseChart=new Chart(ctx2,{type:'doughnut',data:{labels:Object.keys(courseMap),datasets:[{data:Object.values(courseMap),backgroundColor:['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'Students by Course'}}}});
+}
+
+async function saveStudent(){
+if(!isAdmin){toast('Login as admin first!',true);showLogin();return;}
+const payload={
+full_name:document.getElementById('full_name').value.trim(),
+student_id:document.getElementById('student_id').value.trim(),
+email:document.getElementById('email').value.trim()||null,
+course:document.getElementById('course').value.trim(),
+year_of_study:parseInt(document.getElementById('year_of_study').value),
+grade:parseInt(document.getElementById('grade').value),
+status:document.getElementById('status_sel').value
+};
+if(!payload.full_name||!payload.student_id||!payload.course||isNaN(payload.grade)){toast('Fill required *',true);return;}
+const file=document.getElementById('photo').files[0];
+let photoUrl=null;
+if(file){
+toast('Uploading photo...');
+const fileName=Date.now()+'_'+file.name.replace(/[^a-zA-Z0-9._-]/g,'');
+const {error:upErr}=await db.storage.from('student-photos').upload(fileName,file);
+if(upErr){toast('Photo upload failed: '+upErr.message,true);return;}
+const {data}=db.storage.from('student-photos').getPublicUrl(fileName);
+photoUrl=data.publicUrl;
+}
+if(photoUrl) payload.photo_url=photoUrl;
+
+const editId=document.getElementById('edit_id').value;
+document.getElementById('saveBtn').disabled=true;
+let err;
+if(editId){
+if(!photoUrl) delete payload.photo_url;
+const res=await db.from('students_pro').update(payload).eq('id',editId);
+err=res.error;
+}else{
+const res=await db.from('students_pro').insert([payload]);
+err=res.error;
+}
+document.getElementById('saveBtn').disabled=false;
+if(err){toast(err.message,true);return;}
+toast(editId?'Updated!':'Added!');
+clearForm();load();
+}
+function edit(id){
+if(!isAdmin){toast('Admin only!',true);showLogin();return;}
+const s=all.find(x=>x.id===id);
+document.getElementById('full_name').value=s.full_name;
+document.getElementById('student_id').value=s.student_id;
+document.getElementById('email').value=s.email||'';
+document.getElementById('course').value=s.course;
+document.getElementById('year_of_study').value=s.year_of_study;
+document.getElementById('grade').value=s.grade;
+document.getElementById('status_sel').value=s.status;
+document.getElementById('edit_id').value=s.id;
+document.getElementById('saveBtn').textContent='Update Student';
+window.scrollTo({top:0,behavior:'smooth'});
+}
+function clearForm(){
+['full_name','student_id','email','course','grade'].forEach(i=>document.getElementById(i).value='');
+document.getElementById('photo').value='';
+document.getElementById('edit_id').value='';
+document.getElementById('saveBtn').textContent='➕ Add Student';
+}
+async function del(id){
+if(!isAdmin){toast('Admin only!',true);return;}
+if(!confirm('Delete student?'))return;
+const {error}=await db.from('students_pro').delete().eq('id',id);
+if(error){toast(error.message,true);return;}
+toast('Deleted');load();
+}
+function exportCSV(){
+let csv='Full Name,Student ID,Email,Course,Year,Grade,Status,Photo\n';
+filtered.forEach(s=>{csv+=`"${s.full_name}","${s.student_id}","${s.email||''}","${s.course}",${s.year_of_study||''},${s.grade},"${s.status}","${s.photo_url||''}"\n`});
+const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='students_v3.csv';a.click();
+}
+function toast(m,e=false){const t=document.getElementById('toast');t.textContent=m;t.style.background=e?'#dc2626':'#111827';t.style.display='block';setTimeout(()=>t.style.display='none',3000);}
+db.channel('v3').on('postgres_changes',{event:'*',schema:'public',table:'students_pro'},()=>load()).subscribe();
+updateAuthUI();load();
+</script>
+</body>
+</html>
