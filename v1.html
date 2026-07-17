@@ -3,106 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student App - Choose Version</title>
+<title>V1 - Classic</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;display:flex;align-items:center;justify-content:center}
-.container{max-width:1000px;width:100%}
-.header{text-align:center;color:white;margin-bottom:30px}
-.header h1{font-size:38px;font-weight:900;margin-bottom:10px}
-.header p{font-size:16px;opacity:.9}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.card{background:white;border-radius:20px;padding:25px;box-shadow:0 20px 40px rgba(0,0,0,.15);transition:.3s;position:relative;overflow:hidden}
-.card:hover{transform:translateY(-8px);box-shadow:0 30px 60px rgba(0,0,0,.2)}
-.card.v4{grid-column:1/-1;background:linear-gradient(135deg,#111827,#4f46e5);color:white}
-.card.v4.btn{background:white;color:#111827}
-.badge{position:absolute;top:15px;right:15px;background:#10b981;color:white;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.5px}
-.badge.new{background:#f59e0b}
-.badge.ultimate{background:linear-gradient(135deg,#f59e0b,#ef4444);color:white}
-.card h2{font-size:20px;margin-bottom:8px}
-.card p{font-size:13px;color:#6b7280;line-height:1.5;margin-bottom:15px}
-.card.v4 p{color:rgba(255,255,255,.8)}
-.features{list-style:none;margin-bottom:20px}
-.features li{font-size:12px;padding:4px 0;display:flex;align-items:center;gap:6px}
-.features li::before{content:"✅";font-size:11px}
-.card.v4.features li::before{content:"⭐"}
-.btn{display:block;width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;text-align:center;text-decoration:none;cursor:pointer;font-size:14px;transition:.2s}
-.btn-primary{background:#4f46e5;color:white}
-.btn-primary:hover{background:#4338ca}
-.btn-secondary{background:#f3f4f6;color:#374151}
-.footer{text-align:center;color:white;margin-top:25px;font-size:12px;opacity:.8}
-@media(max-width:800px){.grid{grid-template-columns:1fr}.card.v4{grid-column:1}}
+body{font-family:-apple-system,sans-serif;background:#f0f2f5;padding:12px}
+.container{max-width:650px;margin:0 auto;background:white;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1);overflow:hidden}
+.header{background:#111827;color:white;padding:14px;text-align:center}
+.header a{color:#a5b4fc;text-decoration:none;font-size:11px}
+.form{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;border-bottom:1px solid #eee}
+.form input{padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px}
+.form button{grid-column:1/-1;background:#4f46e5;color:white;border:none;padding:10px;border-radius:6px;font-weight:700;cursor:pointer}
+.stats{padding:10px 14px;background:#f9fafb;font-size:11px;color:#6b7280;border-bottom:1px solid #eee}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#f9fafb;padding:8px 10px;text-align:left;font-size:10px;color:#6b7280;text-transform:uppercase;border-bottom:2px solid #eee}
+td{padding:8px 10px;border-bottom:1px solid #f0f0f0;font-size:12px}
+.del{border:none;background:#fee2e2;color:#991b1b;padding:4px 8px;border-radius:5px;cursor:pointer;font-size:10px}
+.empty{text-align:center;padding:20px;color:#9ca3af;font-size:12px}
 </style>
 </head>
 <body>
 <div class="container">
 <div class="header">
-<h1>🎓 Student Record System</h1>
-<p>Scan one QR → Choose your version → All share same live database</p>
-</div>
-
-<div class="grid">
-<div class="card v4">
-<span class="badge ultimate">ULTIMATE - RECOMMENDED</span>
-<h2>🚀 V4 - Ultimate+ (NEW!)</h2>
-<p>The complete enterprise version with everything</p>
-<ul class="features">
-<li>Admin Login System (secure delete/edit)</li>
-<li>Photo Upload + Avatars</li>
-<li>Live Charts (Grade + Course)</li>
-<li>Dark Mode 🌙/☀️</li>
-<li>PDF Report per student + All students PDF</li>
-<li>Bulk Import from Excel / CSV</li>
-<li>Advanced Filters + Search + Export CSV</li>
-<li>Real-time sync + Mobile QR ready</li>
-</ul>
-<a class="btn" href="v4.html">Open V4 Ultimate+ →</a>
-</div>
-
-<div class="card">
-<span class="badge new">IMPROVED</span>
-<h2>📊 V3 - Pro</h2>
-<p>With charts, login & photos</p>
-<ul class="features">
-<li>Admin login</li>
-<li>Edit button</li>
-<li>Charts</li>
-<li>Course filter</li>
-<li>Photo upload</li>
-</ul>
-<a class="btn btn-primary" href="v3.html">Open V3 →</a>
-</div>
-
-<div class="card">
-<span class="badge">STABLE</span>
-<h2>✨ V2 - Improved</h2>
-<p>Search, stats & export</p>
-<ul class="features">
-<li>Search bar</li>
-<li>Average & pass rate</li>
-<li>Course filter</li>
-<li>Export CSV</li>
-</ul>
-<a class="btn btn-secondary" href="v2.html">Open V2 →</a>
-</div>
-
-<div class="card">
 <h2>📱 V1 - Classic</h2>
-<p>Original simple version</p>
-<ul class="features">
-<li>Add students</li>
-<li>Delete</li>
-<li>Live sync</li>
-<li>Simple & fast</li>
-</ul>
-<a class="btn btn-secondary" href="v1.html">Open V1 →</a>
+<p style="font-size:11px;opacity:.7;margin-top:4px">Simple Add / View / Delete</p>
+<a href="index.html">← Back to Menu</a>
+</div>
+
+<div class="form">
+<input id="full_name" placeholder="Full Name *">
+<input id="student_id" placeholder="ID * e.g STU001">
+<input id="course" placeholder="Course *">
+<input id="grade" type="number" placeholder="Grade 0-100 *">
+<button onclick="add()">➕ Add Student</button>
+</div>
+
+<div class="stats" id="stats">Loading...</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Name</th><th>ID</th><th>Course</th><th>Grade</th><th>Action</th></tr></thead>
+<tbody id="tbody"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody>
+</table>
 </div>
 </div>
 
-<div class="footer">
-<p>Built by Reegan • Supabase Live Database in EU • All versions share same data • Password: admin123</p>
-<p style="margin-top:8px">Main QR should point to this landing page: <b>https://Reegan-code.github.io/student-app/</b></p>
-</div>
-</div>
+<script>
+const db=supabase.createClient('https://tuudhnxqmnqxikqgmrzj.supabase.co','sb_publishable_61sdjEEXf09fMqQDz0ybPg_5_p-rPFx');
+let all=[];
+
+async function load(){
+const {data,error}=await db.from('students_pro').select('*').order('created_at',{ascending:false});
+if(error){document.getElementById('stats').textContent='Error: '+error.message;return;}
+all=data;
+document.getElementById('stats').textContent='Total: '+data.length+' | Online: ● Live';
+document.getElementById('tbody').innerHTML=data.length?data.map(s=>`
+<tr>
+<td><b>${s.full_name}</b></td>
+<td>${s.student_id}</td>
+<td>${s.course}</td>
+<td>${s.grade}%</td>
+<td><button class="del" onclick="del(${s.id})">Delete</button></td>
+</tr>`).join(''):'<tr><td colspan="5" class="empty">No students yet</td></tr>';
+}
+
+async function add(){
+const payload={
+full_name:document.getElementById('full_name').value.trim(),
+student_id:document.getElementById('student_id').value.trim(),
+course:document.getElementById('course').value.trim(),
+grade:parseInt(document.getElementById('grade').value),
+status:'Active',
+year_of_study:1
+};
+if(!payload.full_name||!payload.student_id||!payload.course||isNaN(payload.grade)){return alert('Please fill all fields *');}
+const {error}=await db.from('students_pro').insert([payload]);
+if(error)return alert(error.message);
+document.getElementById('full_name').value='';
+document.getElementById('student_id').value='';
+document.getElementById('course').value='';
+document.getElementById('grade').value='';
+load();
+}
+
+async function del(id){
+if(!confirm('Delete this student?'))return;
+await db.from('students_pro').delete().eq('id',id);
+load();
+}
+
+db.channel('v1').on('postgres_changes',{event:'*',schema:'public',table:'students_pro'},()=>load()).subscribe();
+load();
+</script>
 </body>
 </html>
