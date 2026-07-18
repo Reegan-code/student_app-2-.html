@@ -11,20 +11,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:linear-g
 .header{text-align:center;color:white;margin-bottom:20px}
 .header h1{font-size:34px;font-weight:900;margin-bottom:8px}
 .header p{font-size:14px;opacity:.9}
-.demo-box{background:rgba(255,255,255,.18);backdrop-filter:blur(12px);border-radius:16px;padding:18px;margin-bottom:20px;color:white;border:1px solid rgba(255,255,255,.25);box-shadow:0 8px 25px rgba(0,0,0,.15)}
-.demo-box h3{font-size:14px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.demo-box ol{margin-left:16px;font-size:11.5px;line-height:1.6;opacity:.95}
-.demo-box ol li{margin-bottom:3px}
-.demo-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
-.tag{padding:5px 10px;border-radius:20px;font-size:10px;font-weight:800}
-.tag-white{background:white;color:#4f46e5}.tag-yellow{background:#f59e0b;color:white}.tag-green{background:#10b981;color:white}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
 .card{background:white;border-radius:18px;padding:22px;box-shadow:0 15px 35px rgba(0,0,0,.15);transition:.3s;text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden}
 .card:hover{transform:translateY(-6px);box-shadow:0 25px 50px rgba(0,0,0,.2)}
 .card.full{grid-column:1/-1;background:linear-gradient(135deg,#111827,#4f46e5);color:white}
 .badge{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800}
-.b-1{background:#f3f4f6;color:#374151}.b-2{background:#dbeafe;color:#1e40af}.b-3{background:#dcfce7;color:#166534}.b-4{background:#fef3c7;color:#92400e}
-.card.full .badge{background:#f59e0b;color:white}
+.b-1{background:#f3f4f6;color:#374151}.b-2{background:#dbeafe;color:#1e40af}.b-3{background:#dcfce7;color:#166534}
+.card.full.badge{background:#f59e0b;color:white}
 .card h2{font-size:18px;margin-bottom:6px}
 .card p{font-size:12px;color:#6b7280;line-height:1.4;margin-bottom:12px}
 .card.full p{color:rgba(255,255,255,.8)}
@@ -33,8 +26,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:linear-g
 .features li::before{content:"✅";font-size:10px}
 .btn{display:inline-block;padding:9px 16px;border-radius:8px;font-weight:800;font-size:12px;text-align:center}
 .btn-dark{background:#111827;color:white}.btn-blue{background:#4f46e5;color:white}.btn-green{background:#10b981;color:white}.btn-yellow{background:#f59e0b;color:white}
-.card.full .btn{background:white;color:#111827}
-.footer{text-align:center;color:white;margin-top:20px;font-size:11px;opacity:.8}
+.card.full.btn{background:white;color:#111827}
+.demo-box{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:14px;padding:16px;margin-bottom:18px;color:white;border:1px solid rgba(255,255,255,.2)}
+.demo-step{padding:6px 8px;border-radius:6px;margin:3px 0;transition:.3s;font-size:11px;line-height:1.5}
+.demo-step.active{background:rgba(255,255,255,.25);border-left:3px solid #f59e0b;transform:translateX(4px)}
+.speak-btn{border:none;padding:8px 14px;border-radius:20px;font-weight:800;font-size:11px;cursor:pointer;margin-right:6px;margin-top:10px}
+.speak{background:#10b981;color:white}.stop{background:#ef4444;color:white}.pause{background:#f59e0b;color:white}
+.footer{text-align:center;color:white;margin-top:15px;font-size:11px;opacity:.8}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.card.full{grid-column:1}}
 </style>
 </head>
@@ -45,23 +43,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:linear-g
 <p>By Reegan - Scan QR → Choose Version → All share live database</p>
 </div>
 
-<div class="demo-box">
-<h3>🎤 Demo Guide (2 Minutes - Read This During Presentation)</h3>
-<ol>
-<li><b>Start here:</b> "One QR gives 4 evolving versions, all share same live Supabase DB"</li>
-<li>Open <b>V4 Ultimate+ (top card)</b> - Click <b>🌙/☀️ Dark Mode</b> toggle</li>
-<li>Show <b>Live Charts</b> + <b>Search & Filters</b> - Year & Name now fixed in separate columns!</li>
-<li>Click <b>PDF</b> on any student → Instant Report Card</li>
-<li>Show <b>Import Excel</b> button → Bulk upload 100 students</li>
-<li>Try <b>Delete without login</b> → Blocked (Security!)</li>
-<li>Login with <b>admin123</b> → Now Edit/Delete works</li>
-<li>Add live student: <b>DEMO001 / Computer Science / Y4 / 85%</b></li>
-<li>Go back → Open V1/V2/V3 → Same student appears = <b>Real-time Sync!</b></li>
-</ol>
-<div class="demo-tags">
-<span class="tag tag-white">Main QR: Reegan-code.github.io/student-app/</span>
-<span class="tag tag-yellow">Admin: admin123</span>
-<span class="tag tag-green">● Live Database</span>
+<!-- DEMO BOX WITH VOICE -->
+<div class="demo-box" id="demoBox">
+<h3 style="font-size:14px;margin-bottom:10px">🎤 Demo Guide - Accessible Mode</h3>
+<div id="steps">
+<div class="demo-step" id="s1"><b>Step 1:</b> Welcome! This is my Student Record System. One QR code gives you four evolving versions, all sharing the same live database.</div>
+<div class="demo-step" id="s2"><b>Step 2:</b> Click V4 Ultimate Plus at the top. This is my latest version with all features.</div>
+<div class="demo-step" id="s3"><b>Step 3:</b> Toggle Dark Mode. See the moon and sun icon? Great for night use and accessibility.</div>
+<div class="demo-step" id="s4"><b>Step 4:</b> Scroll to live charts. Grade distribution and course analysis update in real time.</div>
+<div class="demo-step" id="s5"><b>Step 5:</b> Try search and filter. Notice Course and Year are now in separate columns - bug fixed!</div>
+<div class="demo-step" id="s6"><b>Step 6:</b> Click PDF button on any student to generate an instant report card.</div>
+<div class="demo-step" id="s7"><b>Step 7:</b> Use Import Excel to bulk upload one hundred students at once.</div>
+<div class="demo-step" id="s8"><b>Step 8:</b> Try to delete without login - it blocks you. Security! Password is admin one two three.</div>
+<div class="demo-step" id="s9"><b>Step 9:</b> Login as admin and add a live student. Watch it appear instantly in V1, V2, V3, and V4 - real time sync with Supabase!</div>
+<div class="demo-step" id="s10"><b>Step 10:</b> Thank you! All versions are mobile ready and QR ready. Main link is Reegan-code dot github dot io slash student-app.</div>
+</div>
+<button class="speak-btn speak" onclick="speakDemo()">🔊 Speak Demo</button>
+<button class="speak-btn pause" onclick="pauseDemo()">⏸️ Pause</button>
+<button class="speak-btn stop" onclick="stopDemo()">⏹️ Stop</button>
+<span id="status" style="font-size:10px;margin-left:8px;opacity:.8"></span>
+<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+<span style="background:white;color:#4f46e5;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:800">QR: Reegan-code.github.io/student-app/</span>
+<span style="background:#f59e0b;color:white;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:800">Admin: admin123</span>
+<span style="background:#10b981;color:white;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:800">♿ Accessible</span>
 </div>
 </div>
 
@@ -69,15 +73,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:linear-g
 <a href="v4.html" class="card full">
 <span class="badge">⭐ ULTIMATE+ - RECOMMENDED</span>
 <h2>🚀 V4 - Ultimate+ (LATEST)</h2>
-<p>The complete enterprise version with everything</p>
+<p>The complete enterprise version</p>
 <ul class="features">
-<li>Dark Mode 🌙 / ☀ Toggle</li>
+<li>Dark Mode 🌙 / ☀️ Toggle</li>
 <li>PDF Report per Student + All Students PDF</li>
 <li>Bulk Import from Excel / CSV</li>
-<li>Admin Login (admin123) - Edit & Delete protection</li>
-<li>Photo Upload + Avatars</li>
-<li>Live Charts (Grade Distribution + Course)</li>
-<li>Search, Filters, Export CSV, Real-time Sync</li>
+<li>Admin Login (admin123)</li>
+<li>Photo Upload + Avatars + Charts + Filters</li>
 </ul>
 <span class="btn">Open V4 Ultimate+ →</span>
 </a>
@@ -88,8 +90,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:linear-g
 <p>Most stable version</p>
 <ul class="features">
 <li>Login system</li>
-<li>Edit button</li>
-<li>Charts</li>
+<li>Edit + Charts</li>
 <li>Photo upload</li>
 <li>Course filter fixed</li>
 </ul>
@@ -118,9 +119,58 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:linear-g
 </div>
 
 <div class="footer">
-<p>Main Link for QR: https://Reegan-code.github.io/student-app/</p>
-<p>Supabase: tuudhnxqmnqxikqgmrzj • Password: admin123 • All versions share data</p>
+<p>Built by Reegan • Supabase Live Database • All versions share same data • Password: admin123</p>
 </div>
 </div>
+
+<script>
+let utterance=null;
+let current=0;
+const texts=[
+"Welcome! This is my Student Record System. One QR code gives you four evolving versions, all sharing the same live database.",
+"Click V4 Ultimate Plus at the top. This is my latest version with all features.",
+"Toggle Dark Mode. See the moon and sun icon? Great for night use and accessibility.",
+"Scroll to live charts. Grade distribution and course analysis update in real time.",
+"Try search and filter. Notice Course and Year are now in separate columns - bug fixed!",
+"Click PDF button on any student to generate an instant report card.",
+"Use Import Excel to bulk upload one hundred students at once.",
+"Try to delete without login - it blocks you. Security! Password is admin one two three.",
+"Login as admin and add a live student. Watch it appear instantly in V1, V2, V3, and V4 - real time sync with Supabase!",
+"Thank you! All versions are mobile ready and QR ready. Main link is Reegan-code dot github dot io slash student-app."
+];
+
+function speakDemo(){
+stopDemo();
+current=0;
+document.getElementById('status').textContent='🔊 Speaking...';
+speakNext();
+}
+function speakNext(){
+if(current>=texts.length){document.getElementById('status').textContent='✅ Demo finished';clearActive();return;}
+clearActive();
+document.getElementById('s'+(current+1)).classList.add('active');
+document.getElementById('s'+(current+1)).scrollIntoView({behavior:'smooth',block:'center'});
+utterance=new SpeechSynthesisUtterance(texts[current]);
+utterance.rate=0.95;
+utterance.pitch=1;
+utterance.onend=()=>{current++;speakNext();};
+utterance.onerror=()=>{document.getElementById('status').textContent='';};
+speechSynthesis.speak(utterance);
+document.getElementById('status').textContent='Speaking Step '+(current+1)+' of '+texts.length;
+}
+function pauseDemo(){
+if(speechSynthesis.speaking){
+if(speechSynthesis.paused){speechSynthesis.resume();document.getElementById('status').textContent='▶️ Resumed';}
+else{speechSynthesis.pause();document.getElementById('status').textContent='⏸️ Paused';}
+}
+}
+function stopDemo(){
+speechSynthesis.cancel();
+clearActive();
+document.getElementById('status').textContent='⏹️ Stopped';
+current=0;
+}
+function clearActive(){document.querySelectorAll('.demo-step').forEach(e=>e.classList.remove('active'));}
+</script>
 </body>
 </html>
